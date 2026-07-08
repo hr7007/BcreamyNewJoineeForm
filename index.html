@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B'Creamy — Employee Joining Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0d0d0d; --black-2:#161010; --maroon-1:#2b0a0a; --maroon-2:#150505;
+    --red:#DA2B2B; --red-dark:#B31F1F; --gold:#F5C518;
+    --cream:#FBF3E7; --white:#ffffff;
+    --ink:#1c1410; --ink-soft:#83726a; --line:#ECDFCC;
+    --mint:#2FA76B; --danger:#DA2B2B;
+    --radius:12px; --shadow:0 2px 14px rgba(20,10,5,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;}
+  h1,h2,h3{font-family:'Poppins',sans-serif;font-weight:700;margin:0;}
+
+  .navbar{background:var(--black);border-bottom:3px solid var(--red);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .navbar .logo-row{display:flex;align-items:center;gap:12px;}
+  .logo-icon{width:40px;height:40px;border-radius:10px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid var(--gold);}
+  .wordmark{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;letter-spacing:.02em;}
+  .wordmark .b{color:var(--gold);} .wordmark .creamy{color:var(--red);}
+  .tagline{color:#9c948d;font-size:11.5px;margin-top:1px;}
+
+  .hero{background:linear-gradient(135deg,var(--maroon-1),var(--maroon-2));padding:26px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .hero h1{color:#fff;font-size:26px;}
+  .hero h1 .accent{color:var(--gold);}
+  .hero p{color:#cbb9b0;font-size:13px;margin-top:5px;}
+  .id-badge{background:var(--red);border-radius:9px;padding:8px 16px;text-align:center;min-width:150px;}
+  .id-badge .lbl{color:#fff;font-size:11px;}
+  .id-badge .val{color:var(--gold);font-weight:800;font-size:14px;font-family:'Poppins',sans-serif;}
+
+  .progress-row{background:#fff;padding:10px 24px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);}
+  .progress-row .lbl{font-size:12.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap;}
+  .progress-track{flex:1;height:8px;border-radius:4px;background:#F5DCDC;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--red);width:0%;transition:width .4s ease;}
+  .progress-row .pct{font-size:12.5px;font-weight:700;color:var(--red-dark);white-space:nowrap;}
+
+  .tabs-row{background:var(--black);display:flex;gap:22px;padding:0 24px;overflow-x:auto;}
+  .step-tab{padding:12px 2px;font-size:12.5px;font-weight:700;letter-spacing:.03em;color:#8a8a8a;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;text-transform:uppercase;}
+  .step-tab.active{color:var(--gold);border-color:var(--gold);}
+  .step-tab.done{color:var(--mint);}
+
+  .wrap{max-width:820px;margin:0 auto;padding:22px 18px 90px;}
+
+  .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px;border:1px solid var(--line);}
+  .card-head{background:linear-gradient(135deg,var(--maroon-1),var(--black-2));padding:13px 18px;display:flex;align-items:center;gap:12px;}
+  .badge-letter{width:26px;height:26px;border-radius:6px;background:var(--gold);color:#1c1410;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;flex:none;}
+  .card-head h2{color:#fff;font-size:16px;}
+  .card-body{padding:20px;}
+  .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;}
+  @media (max-width:600px){.fields-grid{grid-template-columns:1fr;}}
+  .field{margin-bottom:2px;}
+  .field.full{grid-column:1/-1;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+  .field label .req{color:var(--red);margin-left:2px;}
+
+  .input-icon{position:relative;}
+  .input-icon svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--red);fill:none;stroke-width:2;pointer-events:none;}
+
+  input[type=text],input[type=number],input[type=date],input[type=tel],input[type=email],select,textarea{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:14px;background:#FAFAF8;color:var(--ink);
+  }
+  /* Must come after the generic input rule above — same CSS specificity, so
+     source order decides the winner, and this needs to win to clear the icon. */
+  .input-icon input, .input-icon select{padding-left:34px;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);background:#fff;}
+  ::placeholder{color:#b3a89f;}
+
+  .file-row{display:flex;align-items:center;gap:10px;border:1.5px dashed var(--line);border-radius:9px;padding:11px 12px;background:#FAFAF8;}
+  .file-row.uploaded{border-style:solid;border-color:var(--mint);background:#EEF9F2;}
+  .file-row input[type=file]{flex:1;font-size:12.5px;background:none;border:none;padding:0;}
+  .file-status{font-size:12px;color:var(--mint);font-weight:700;white-space:nowrap;}
+
+  .checkbox-row{display:flex;align-items:flex-start;gap:9px;grid-column:1/-1;}
+  .checkbox-row input{margin-top:3px;accent-color:var(--red);}
+  .checkbox-row label{margin:0;font-weight:400;font-size:13.5px;}
+
+  .addr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1;}
+  .grid-table{width:100%;border-collapse:collapse;font-size:13px;grid-column:1/-1;}
+  .grid-table th{text-align:left;font-weight:600;color:var(--ink-soft);font-size:11.5px;padding:4px 6px;text-transform:uppercase;}
+  .grid-table td{padding:4px 6px;}
+  .grid-table input{padding:8px 9px;font-size:13px;}
+  .field[data-fid] .grid-add{background:none;border:1.5px dashed var(--red);color:var(--red-dark);border-radius:8px;padding:6px 14px;font-size:12.5px;cursor:pointer;margin-top:8px;font-weight:600;}
+  .grid-row-remove{background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px;}
+
+  .sig-canvas{border:1.5px solid var(--line);border-radius:9px;width:100%;height:130px;touch-action:none;background:#fff;}
+  .sig-actions{display:flex;gap:8px;margin-top:6px;}
+
+  .actions{display:flex;justify-content:space-between;gap:10px;margin-top:6px;}
+  button{cursor:pointer;font-family:inherit;}
+  .btn{padding:12px 22px;border-radius:9px;border:none;font-weight:700;font-size:14px;}
+  .btn-primary{background:var(--red);color:#fff;}
+  .btn-primary:hover{background:var(--red-dark);}
+  .btn-ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-draft{background:none;border:1.5px solid var(--red);color:var(--red-dark);font-size:13px;padding:9px 16px;}
+
+  .error-box{background:#FCE8E6;border:1.5px solid var(--red);color:var(--red-dark);border-radius:9px;padding:13px 15px;font-size:13.5px;margin-bottom:14px;font-weight:600;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:11px 20px;border-radius:20px;font-size:13.5px;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid var(--red);}
+  .toast.show{opacity:1;}
+  .success-screen{text-align:center;padding:70px 20px;}
+  .success-screen .badge-letter{width:60px;height:60px;border-radius:50%;margin:0 auto 18px;font-size:28px;}
+  .success-screen h1{font-size:26px;color:var(--red-dark);margin-bottom:10px;}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:4px;}
+</style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-row">
+      <div class="logo-icon">🍦</div>
+      <div>
+        <div class="wordmark"><span class="b">B'</span><span class="creamy">CREAMY</span></div>
+        <div class="tagline">Iconic Thickshakes · Since 1893</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div>
+      <h1>Employee <span class="accent">Joining Form</span></h1>
+      <p>B'Creamy India Pvt Ltd — Please complete all sections carefully</p>
+    </div>
+    <div class="id-badge">
+      <div class="lbl">Employee ID</div>
+      <div class="val" id="empIdBadge">Not started</div>
+    </div>
+  </div>
+
+  <div class="progress-row">
+    <div class="lbl">Progress</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="pct" id="pctLabel">0% Complete</div>
+  </div>
+
+  <div class="tabs-row" id="tabsRow"></div>
+
+  <div class="wrap">
+    <div id="errorBox"></div>
+    <div id="formRoot"></div>
+    <div class="actions" id="actionsRow"></div>
+  </div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIGURE THIS =====
+const API_URL = 'https://script.google.com/macros/s/AKfycbzOyCChy-cmc7qPyJ6aLLTJRbMNGtEL0n7wVGdhqa71Tlpcapn2Zz51uix9eauj93v4/exec';
+// ===========================
+
+const STEP_NAMES = {1:'Documents',2:'Personal',3:'Contact & Bank',4:'Qualifications',5:'References'};
+const SECTION_LETTERS = ['A','B','C','D','E','F','G','H'];
+let fieldsConfig = [];
+let currentStep = 1;
+let employeeId = localStorage.getItem('bcreamy_employee_id') || null;
+let formData = {};
+let uploadedDocs = {};
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+async function apiPost(action, data){
+  try {
+    const res = await fetch(API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'data=' + encodeURIComponent(JSON.stringify({action, ...data}))
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('apiPost failed:', action, err);
+    toast('Network error — please check your connection and try again.');
+    return { ok:false, error: 'Network error: ' + err.message };
+  }
+}
+async function apiGet(params){
+  try {
+    const url = API_URL + '?' + new URLSearchParams(params).toString();
+    const res = await fetch(url);
+    return await res.json();
+  } catch (err) {
+    console.error('apiGet failed:', params, err);
+    toast('Network error — please check your connection and try again.');
+    return { ok:false, error: 'Network error: ' + err.message };
+  }
+}
+
+function updateEmpIdBadge(){
+  document.getElementById('empIdBadge').textContent = employeeId ? employeeId.toUpperCase() : 'Not started';
+}
+
+async function init(){
+  updateEmpIdBadge();
+  const cfg = await apiGet({action:'getConfig'});
+  if(!cfg.ok){ toast('Could not load form. Check API_URL.'); return; }
+  fieldsConfig = cfg.fields.sort((a,b)=>a.sort_order-b.sort_order);
+
+  if(employeeId){
+    const emp = await apiGet({action:'getEmployee', employee_id: employeeId});
+    if(emp.ok && emp.employee){
+      if(emp.employee.status === 'submitted'){
+        // Already submitted from this device before — don't reopen the wizard
+        // pre-filled with old answers, which looked like "nothing happened".
+        localStorage.removeItem('bcreamy_employee_id');
+        showAlreadySubmittedScreen();
+        return;
+      }
+      formData = emp.employee.data || {};
+      (emp.employee.documents||[]).forEach(d => uploadedDocs[d.field_id] = {drive_url:d.drive_url, file_name:d.file_name});
+    } else {
+      // Stale/invalid ID left in localStorage — start clean instead of getting stuck
+      localStorage.removeItem('bcreamy_employee_id');
+      employeeId = null;
+    }
+  }
+  render();
+}
+
+function showAlreadySubmittedScreen(){
+  document.body.innerHTML = `
+    <div class="wrap success-screen">
+      <div class="badge-letter" style="background:var(--mint);color:#fff;">✓</div>
+      <h1>Already submitted</h1>
+      <p>This joining form was already submitted to B'Creamy HR from this device. If you need to make a correction, please contact HR directly.</p>
+    </div>`;
+}
+
+function stepFields(step){ return fieldsConfig.filter(f => f.step_number === step); }
+function totalSteps(){ return Math.max(...fieldsConfig.map(f=>f.step_number), 1); }
+
+function computeProgress(){
+  const mandatory = fieldsConfig.filter(f=>f.is_mandatory);
+  if(mandatory.length===0) return 100;
+  let filled=0;
+  mandatory.forEach(f=>{
+    if(f.field_type==='file'){ if(uploadedDocs[f.field_id]) filled++; }
+    else { const v=formData[f.field_id]; if(v!==undefined && v!==null && String(v).trim()!=='') filled++; }
+  });
+  return Math.round((filled/mandatory.length)*100);
+}
+function updateProgressUI(){
+  const pct = computeProgress();
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('pctLabel').textContent = pct+'% Complete';
+}
+
+function renderTabs(){
+  const el = document.getElementById('tabsRow');
+  el.innerHTML = '';
+  for(let s=1; s<=totalSteps(); s++){
+    const d = document.createElement('div');
+    d.className = 'step-tab' + (s===currentStep?' active':'') + (s<currentStep?' done':'');
+    d.textContent = s + '. ' + (STEP_NAMES[s]||'Step '+s);
+    d.onclick = () => jumpToStep(s);
+    el.appendChild(d);
+  }
+}
+async function jumpToStep(s){
+  await ensureDraftSaved();
+  currentStep = s;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function fieldLabel(f){
+  return `<label>${f.field_label}${f.is_mandatory ? '<span class="req">*</span>' : ''}</label>`;
+}
+
+// Minimal red line-icon set, matched by keyword against label/id
+function fieldIcon(f){
+  const s = (f.field_id + ' ' + f.field_label).toLowerCase();
+  const I = {
+    person:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>',
+    phone:'<svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>',
+    mail:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+    calendar:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+    gender:'<svg viewBox="0 0 24 24"><circle cx="10" cy="14" r="5"/><path d="M17 3l4 0 0 4M20.5 3.5L14 10"/></svg>',
+    pin:'<svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+    bank:'<svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M4 10v9M20 10v9M8 10v9M16 10v9M2 21h20"/></svg>',
+    card:'<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>'
+  };
+  if(/name/.test(s) && !/company|institution|bank|nominee/.test(s)) return I.person;
+  if(/mobile|phone|contact no/.test(s)) return I.phone;
+  if(/email/.test(s)) return I.mail;
+  if(/date|dob|wedding/.test(s)) return I.calendar;
+  if(/gender/.test(s)) return I.gender;
+  if(/address|place of birth/.test(s)) return I.pin;
+  if(/bank|account|ifsc/.test(s)) return I.bank;
+  if(/pan|aadhar|passport|voter|license|ration|uan/.test(s)) return I.card;
+  return '';
+}
+
+function renderField(f){
+  const val = formData[f.field_id] ?? '';
+  const icon = fieldIcon(f);
+  const iconWrapOpen = icon ? '<div class="input-icon">'+icon : '<div>';
+  const iconWrapClose = '</div>';
+  switch(f.field_type){
+    case 'text': case 'number': case 'date':
+      return `<div class="field" data-fid="${f.field_id}">${fieldLabel(f)}${iconWrapOpen}
+        <input type="${f.field_type}" data-field="${f.field_id}" placeholder="Enter ${f.field_label.toLowerCase()}" value="${val ? String(val).replace(/"/g,'&quot;') : ''}">
+      ${iconWrapClose}</div>`;
+    case 'dropdown':
+      return `<div class="field" data-fid="${f.field_id}">${fieldLabel(f)}${iconWrapOpen}
+        <select data-field="${f.field_id}">
+          <option value="">Select ${f.field_label}</option>
+          ${f.options.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      ${iconWrapClose}</div>`;
+    case 'checkbox':
+      return `<div class="field checkbox-row" data-fid="${f.field_id}">
+        <input type="checkbox" data-field="${f.field_id}" id="chk_${f.field_id}" ${val?'checked':''}>
+        <label for="chk_${f.field_id}">${f.field_label}${f.is_mandatory?'<span class="req">*</span>':''}</label>
+      </div>`;
+    case 'file': {
+      const doc = uploadedDocs[f.field_id];
+      return `<div class="field full" data-fid="${f.field_id}">${fieldLabel(f)}
+        <div class="file-row ${doc?'uploaded':''}">
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png" data-file="${f.field_id}">
+          <span class="file-status">${doc ? '✓ '+doc.file_name : ''}</span>
+        </div>
+      </div>`;
+    }
+    case 'address': {
+      const subs = ['Door No','Building','Street','Location','City','District','Pin Code','State'];
+      const stored = formData[f.field_id] || {};
+      return `<div class="field full" data-fid="${f.field_id}">${fieldLabel(f)}
+        <div class="addr-grid">
+          ${subs.map(s=>`<input type="text" placeholder="${s}" data-addr="${f.field_id}|${s}" value="${(stored[s]||'').replace(/"/g,'&quot;')}">`).join('')}
+        </div>
+      </div>`;
+    }
+    case 'grid':
+      return renderGrid(f);
+    case 'nomination':
+      return renderGrid(f, ['Nominee Name','Relationship','Share %','Address']);
+    case 'signature':
+      return `<div class="field full" data-fid="${f.field_id}">${fieldLabel(f)}
+        <canvas class="sig-canvas" id="sigCanvas" data-field="${f.field_id}"></canvas>
+        <div class="sig-actions">
+          <button type="button" class="btn btn-ghost" onclick="clearSignature()">Clear</button>
+        </div>
+        <div class="hint">Sign with mouse or finger above.</div>
+      </div>`;
+    default:
+      return '';
+  }
+}
+
+const GRID_COLUMNS = {
+  fld_dependents: ['Name','Relation','DOB','Gender'],
+  fld_languages: ['Language','Read','Write','Speak'],
+  fld_education: ['Course','Institution','University','Year','% Marks','Specialization'],
+  fld_experience: ['Company','Address','From','To','Designation','Industry','CTC']
+};
+
+function renderGrid(f, overrideCols){
+  const cols = overrideCols || GRID_COLUMNS[f.field_id] || ['Value'];
+  const rows = formData[f.field_id] || [];
+  const rowsHtml = (rows.length?rows:[{}]).map((row,i)=>renderGridRow(f.field_id, cols, row, i)).join('');
+  return `<div class="field full" data-fid="${f.field_id}">${fieldLabel(f)}
+    <table class="grid-table" data-grid="${f.field_id}">
+      <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}<th></th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <button type="button" class="grid-add" onclick="addGridRow('${f.field_id}')">+ Add row</button>
+  </div>`;
+}
+function renderGridRow(fieldId, cols, row, idx){
+  return `<tr data-row="${idx}">
+    ${cols.map(c=>`<td><input type="text" data-grid-cell="${fieldId}|${idx}|${c}" value="${(row[c]||'').toString().replace(/"/g,'&quot;')}"></td>`).join('')}
+    <td><button type="button" class="grid-row-remove" onclick="removeGridRow('${fieldId}',${idx})">✕</button></td>
+  </tr>`;
+}
+window.addGridRow = function(fieldId){
+  if(!formData[fieldId]) formData[fieldId] = [];
+  formData[fieldId].push({});
+  render();
+};
+window.removeGridRow = function(fieldId, idx){
+  formData[fieldId].splice(idx,1);
+  render();
+};
+
+function groupByFormSection(fields){
+  const groups = [];
+  let last = null;
+  fields.forEach(f=>{
+    if(f.form_section !== last){ groups.push({section:f.form_section, fields:[]}); last = f.form_section; }
+    groups[groups.length-1].fields.push(f);
+  });
+  return groups;
+}
+
+function render(){
+  renderTabs();
+  updateProgressUI();
+  updateEmpIdBadge();
+  const fields = stepFields(currentStep);
+  const groups = groupByFormSection(fields);
+  const root = document.getElementById('formRoot');
+  root.innerHTML = groups.map((g,i)=>`
+    <div class="card">
+      <div class="card-head">
+        <div class="badge-letter">${SECTION_LETTERS[i%8]}</div>
+        <h2>${g.section}</h2>
+      </div>
+      <div class="card-body"><div class="fields-grid">
+        ${g.fields.map(renderField).join('')}
+      </div></div>
+    </div>`).join('');
+  bindInputs();
+  initSignaturePad();
+  renderActions();
+}
+
+function bindInputs(){
+  document.querySelectorAll('[data-field]').forEach(el=>{
+    const fid = el.dataset.field;
+    el.addEventListener('input', ()=>{
+      formData[fid] = el.type==='checkbox' ? el.checked : el.value;
+      updateProgressUI();
+    });
+  });
+  document.querySelectorAll('[data-addr]').forEach(el=>{
+    const [fid, sub] = el.dataset.addr.split('|');
+    el.addEventListener('input', ()=>{
+      if(!formData[fid]) formData[fid] = {};
+      formData[fid][sub] = el.value;
+      updateProgressUI();
+    });
+  });
+  document.querySelectorAll('[data-grid-cell]').forEach(el=>{
+    const [fid, idx, col] = el.dataset.gridCell.split('|');
+    el.addEventListener('input', ()=>{
+      if(!formData[fid]) formData[fid] = [];
+      if(!formData[fid][idx]) formData[fid][idx] = {};
+      formData[fid][idx][col] = el.value;
+    });
+  });
+  document.querySelectorAll('[data-file]').forEach(el=>{
+    el.addEventListener('change', ()=>handleFileUpload(el));
+  });
+}
+
+async function handleFileUpload(inputEl){
+  const fieldId = inputEl.dataset.file;
+  const file = inputEl.files[0];
+  if(!file) return;
+  if(!employeeId){ await ensureDraftSaved(); }
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const base64 = reader.result.split(',')[1];
+    toast('Uploading...');
+    const res = await apiPost('uploadFile', {
+      employee_id: employeeId, field_id: fieldId,
+      file_name: file.name, mime_type: file.type || 'application/octet-stream', base64
+    });
+    if(res.ok){
+      uploadedDocs[fieldId] = {drive_url: res.drive_url, file_name: file.name};
+      toast('Uploaded ✓');
+      render();
+    } else {
+      toast('Upload failed: ' + res.error);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ---- Signature pad ----
+let sigCtx, sigDrawing=false;
+function initSignaturePad(){
+  const canvas = document.getElementById('sigCanvas');
+  if(!canvas) return;
+  canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight;
+  sigCtx = canvas.getContext('2d');
+  sigCtx.lineWidth = 2; sigCtx.strokeStyle = '#1c1410'; sigCtx.lineCap='round';
+  const pos = e => {
+    const r = canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return {x: p.clientX-r.left, y: p.clientY-r.top};
+  };
+  const start = e => { sigDrawing=true; const p=pos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); };
+  const move = e => { if(!sigDrawing) return; e.preventDefault(); const p=pos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); };
+  const end = () => {
+    sigDrawing=false;
+    formData['fld_signature'] = canvas.toDataURL('image/png');
+    updateProgressUI();
+  };
+  canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', move); canvas.addEventListener('touchend', end);
+  if(formData['fld_signature']){
+    const img = new Image();
+    img.onload = ()=>sigCtx.drawImage(img,0,0,canvas.width,canvas.height);
+    img.src = formData['fld_signature'];
+  }
+}
+window.clearSignature = function(){
+  const canvas = document.getElementById('sigCanvas');
+  sigCtx.clearRect(0,0,canvas.width,canvas.height);
+  delete formData['fld_signature'];
+};
+
+function renderActions(){
+  const row = document.getElementById('actionsRow');
+  row.innerHTML = `
+    <button class="btn btn-ghost" ${currentStep===1?'style="visibility:hidden"':''} onclick="goStep(-1)">← Back</button>
+    <button class="btn btn-draft" onclick="saveDraft()">Save & Exit</button>
+    ${currentStep < totalSteps()
+      ? `<button class="btn btn-primary" onclick="goStep(1)">Next →</button>`
+      : `<button class="btn btn-primary" onclick="submitForm()">Submit Form</button>`}
+  `;
+}
+
+async function ensureDraftSaved(){
+  const res = await apiPost('saveDraft', {employee_id: employeeId, data: formData});
+  if(res && res.ok){ employeeId = res.employee_id; localStorage.setItem('bcreamy_employee_id', employeeId); updateEmpIdBadge(); }
+  return res || { ok:false, error:'Unknown error' };
+}
+
+async function goStep(delta){
+  await ensureDraftSaved();
+  currentStep = Math.min(Math.max(currentStep+delta,1), totalSteps());
+  document.getElementById('errorBox').innerHTML='';
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function saveDraft(){
+  const res = await ensureDraftSaved();
+  toast(res.ok ? 'Draft saved. You can return anytime using this device/browser.' : 'Could not save draft — check your connection.');
+}
+
+async function submitForm(){
+  const btn = document.querySelector('.actions .btn-primary');
+  if(btn){ btn.disabled = true; btn.textContent = 'Submitting...'; }
+
+  const draftRes = await ensureDraftSaved();
+  if(!draftRes.ok){
+    if(btn){ btn.disabled = false; btn.textContent = 'Submit Form'; }
+    const box = document.getElementById('errorBox');
+    box.innerHTML = `<div class="error-box">Couldn't save your answers — ${draftRes.error || 'please check your connection and try again'}.</div>`;
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+
+  const res = await apiPost('submitForm', {employee_id: employeeId, data: formData});
+  if(res.ok){
+    localStorage.removeItem('bcreamy_employee_id');
+    document.body.innerHTML = `
+      <div class="wrap success-screen">
+        <div class="badge-letter" style="background:var(--mint);color:#fff;">✓</div>
+        <h1>Thank you!</h1>
+        <p>Your joining form has been submitted to B'Creamy HR. They'll follow up if anything else is needed.</p>
+      </div>`;
+  } else {
+    if(btn){ btn.disabled = false; btn.textContent = 'Submit Form'; }
+    const box = document.getElementById('errorBox');
+    box.innerHTML = `<div class="error-box">${res.missing ? 'Please complete before submitting: ' + res.missing.join(', ') : 'Submission failed: ' + (res.error || 'unknown error')}</div>`;
+    toast('Could not submit — see details above');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+init();
+</script>
+</body>
+</html>
