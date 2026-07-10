@@ -261,8 +261,8 @@ function renderTabs(){
     el.appendChild(d);
   }
 }
-async function jumpToStep(s){
-  await ensureDraftSaved();
+function jumpToStep(s){
+  ensureDraftSaved();
   currentStep = s;
   render();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -518,14 +518,27 @@ function renderActions(){
   `;
 }
 
+let draftSaveInFlight = null;
 async function ensureDraftSaved(){
-  const res = await apiPost('saveDraft', {employee_id: employeeId, data: formData});
-  if(res && res.ok){ employeeId = res.employee_id; localStorage.setItem('bcreamy_employee_id', employeeId); updateEmpIdBadge(); }
-  return res || { ok:false, error:'Unknown error' };
+  // Reuse an in-flight save instead of firing a second overlapping request —
+  // matters once saves happen in the background on every step change.
+  if(draftSaveInFlight) return draftSaveInFlight;
+  draftSaveInFlight = apiPost('saveDraft', {employee_id: employeeId, data: formData})
+    .then(res => {
+      if(res && res.ok){ employeeId = res.employee_id; localStorage.setItem('bcreamy_employee_id', employeeId); updateEmpIdBadge(); }
+      draftSaveInFlight = null;
+      return res || { ok:false, error:'Unknown error' };
+    })
+    .catch(err => { draftSaveInFlight = null; return { ok:false, error: err.message }; });
+  return draftSaveInFlight;
 }
 
-async function goStep(delta){
-  await ensureDraftSaved();
+function goStep(delta){
+  // Switch the step immediately — don't make the person wait on a network
+  // round trip just to turn the page. The draft saves in the background;
+  // ensureDraftSaved()'s in-flight guard keeps this safe even if several
+  // fire in quick succession.
+  ensureDraftSaved();
   currentStep = Math.min(Math.max(currentStep+delta,1), totalSteps());
   document.getElementById('errorBox').innerHTML='';
   render();
@@ -533,6 +546,7 @@ async function goStep(delta){
 }
 
 async function saveDraft(){
+  toast('Saving...');
   const res = await ensureDraftSaved();
   toast(res.ok ? 'Draft saved. You can return anytime using this device/browser.' : 'Could not save draft — check your connection.');
 }
@@ -541,13 +555,22 @@ async function submitForm(){
   const btn = document.querySelector('.actions .btn-primary');
   if(btn){ btn.disabled = true; btn.textContent = 'Submitting...'; }
 
-  const draftRes = await ensureDraftSaved();
-  if(!draftRes.ok){
-    if(btn){ btn.disabled = false; btn.textContent = 'Submit Form'; }
-    const box = document.getElementById('errorBox');
-    box.innerHTML = `<div class="error-box">Couldn't save your answers — ${draftRes.error || 'please check your connection and try again'}.</div>`;
-    window.scrollTo({top:0,behavior:'smooth'});
-    return;
+  // Only pay for a separate draft-save round trip if we don't have an
+  // employee_id yet — submitForm_ already persists the full current answers
+  // server-side in one shot, so a prior save isn't otherwise needed.
+  if(!employeeId){
+    const draftRes = await ensureDraftSaved();
+    if(!draftRes.ok){
+      if(btn){ btn.disabled = false; btn.textContent = 'Submit Form'; }
+      const box = document.getElementById('errorBox');
+      box.innerHTML = `<div class="error-box">Couldn't save your answers — ${draftRes.error || 'please check your connection and try again'}.</div>`;
+      window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+  } else if(draftSaveInFlight){
+    // A background save from the last step change might still be in flight —
+    // wait for that one call rather than firing a redundant extra save.
+    await draftSaveInFlight;
   }
 
   const res = await apiPost('submitForm', {employee_id: employeeId, data: formData});
